@@ -1,1 +1,1 @@
-export { User, UserDocument } from './users.models';
+export { User, UserDocument, UserShema } from './users.models';

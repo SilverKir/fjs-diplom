@@ -17,7 +17,7 @@ export class User implements IUser {
   name: string;
 
   @Prop()
-  contactPhone?: string | undefined;
+  contactPhone: string;
 
   @Prop({
     required: true,

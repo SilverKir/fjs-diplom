@@ -17,13 +17,28 @@ export class UsersService implements IUserService {
     return await user.save();
   }
 
-  findById(id: string): Promise<IUser> {
-    throw new Error('Method not implemented.');
+  async findById(id: string): Promise<IUser | null> {
+    return await this.UserModel.findById(id).select('-__v').exec();
   }
-  findByEmail(email: string): Promise<IUser> {
-    throw new Error('Method not implemented.');
+
+  async findByEmail(email: string): Promise<IUser | null> {
+    return await this.UserModel.findOne({ email: email }).select('-__v').exec();
   }
-  findAll(params: SearchUserParams): Promise<IUser[]> {
-    throw new Error('Method not implemented.');
+  async findAll(params: SearchUserParams): Promise<IUser[] | null> {
+    const users = await this.UserModel.find({
+      name: { $regex: params.name, $options: 'i' },
+      email: { $regex: params.email, $options: 'i' },
+      contactPhone: { $regex: params.contactPhone, $options: 'i' },
+    })
+      .select('-__v')
+      .exec();
+
+    if (params.limit > 0) {
+      return users.slice(
+        params.offset > 0 ? params.offset - 1 : 0,
+        params.offset > 0 ? params.limit + params.offset - 1 : params.limit - 1,
+      );
+    }
+    return users.slice(params.offset > 0 ? params.offset - 1 : 0);
   }
 }
