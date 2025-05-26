@@ -22,7 +22,6 @@ export class AuthService {
 
   async validateById(id: string): Promise<User | null> {
     const user = await this.usersService.findById(id);
-    console.log(user);
     return user ? user : null;
   }
 
