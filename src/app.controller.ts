@@ -19,6 +19,5 @@ export class AppController {
   @Post('auth/logout')
   async logout(@Request() req, @Res({ passthrough: true }) res: Response) {
     await this.authService.logout(res);
-    return req.user;
   }
 }

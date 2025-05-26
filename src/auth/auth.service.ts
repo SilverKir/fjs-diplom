@@ -20,6 +20,12 @@ export class AuthService {
     return null;
   }
 
+  async validateById(id: string): Promise<User | null> {
+    const user = await this.usersService.findById(id);
+    console.log(user);
+    return user ? user : null;
+  }
+
   async login(req, response: Response) {
     const user: User = req.user;
     const answer = {
