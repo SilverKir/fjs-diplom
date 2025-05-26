@@ -12,19 +12,20 @@ export class UsersService implements IUserService {
     @InjectConnection() private connection: Connection,
   ) {}
 
-  async create(data: Partial<IUser>): Promise<IUser> {
+  async create(data: Partial<IUser>): Promise<User> {
     const user = new this.UserModel(data);
     return await user.save();
   }
 
-  async findById(id: string): Promise<IUser | null> {
+  async findById(id: string): Promise<User | null> {
     return await this.UserModel.findById(id).select('-__v').exec();
   }
 
-  async findByEmail(email: string): Promise<IUser | null> {
+  async findByEmail(email: string): Promise<User | null> {
     return await this.UserModel.findOne({ email: email }).select('-__v').exec();
   }
-  async findAll(params: SearchUserParams): Promise<IUser[] | null> {
+
+  async findAll(params: SearchUserParams): Promise<User[] | null> {
     const users = await this.UserModel.find({
       name: { $regex: params.name, $options: 'i' },
       email: { $regex: params.email, $options: 'i' },
