@@ -9,6 +9,7 @@ import { LocalStrategy } from './local.stratagy';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { UnconfirmedGuard } from './unconfirmed.guard';
 
 @Module({
   imports: [

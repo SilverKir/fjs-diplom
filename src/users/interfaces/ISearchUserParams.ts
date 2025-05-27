@@ -1,4 +1,4 @@
-export interface SearchUserParams {
+export interface ISearchUserParams {
   limit: number;
   offset: number;
   email: string;

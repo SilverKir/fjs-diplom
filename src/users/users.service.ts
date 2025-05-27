@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Connection, Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 
-import { IUser, IUserService, SearchUserParams } from '../interfaces';
-import { User, UserDocument } from '../models';
+import { IUser, IUserService, ISearchUserParams } from './interfaces';
+import { User, UserDocument } from './users.models';
 
 @Injectable()
 export class UsersService implements IUserService {
@@ -25,7 +25,7 @@ export class UsersService implements IUserService {
     return await this.UserModel.findOne({ email: email }).select('-__v').exec();
   }
 
-  async findAll(params: SearchUserParams): Promise<User[] | null> {
+  async findAll(params: ISearchUserParams): Promise<User[] | null> {
     const users = await this.UserModel.find({
       name: { $regex: params.name, $options: 'i' },
       email: { $regex: params.email, $options: 'i' },

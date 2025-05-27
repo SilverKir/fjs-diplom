@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId } from 'mongoose';
 
-import { IUser } from '../interfaces';
+import { IUser } from './interfaces';
 
 export type UserDocument = User & Document;
 

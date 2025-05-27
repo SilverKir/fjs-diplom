@@ -8,9 +8,9 @@ import {
 
 import * as bcrypt from 'bcrypt';
 
-import { UsersService } from '../services';
-import { CreateClientUserDto, IClientUserAnswer } from '../interfaces';
-import { User } from '../models';
+import { UsersService } from './users.service';
+import { CreateClientUserDto, IClientUserAnswer } from './interfaces';
+import { User } from './users.models';
 
 @Controller('api')
 export class UsersController {
