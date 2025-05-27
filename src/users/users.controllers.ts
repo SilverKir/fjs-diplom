@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from './users.service';
 import { CreateClientUserDto, IClientUserAnswer } from './interfaces';
 import { User } from './users.models';
+import { Role } from './users.roles.enum';
 
 @Controller('api')
 export class UsersController {
@@ -26,7 +27,7 @@ export class UsersController {
       name: createUser.name,
       passwordHash: await bcrypt.hash(createUser.password, saltOrRounds),
       contactPhone: createUser.contactPhone,
-      role: 'client',
+      role: Role.Client,
     });
 
     try {

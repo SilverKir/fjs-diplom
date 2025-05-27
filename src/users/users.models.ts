@@ -2,6 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId } from 'mongoose';
 
 import { IUser } from './interfaces';
+import { Role } from './users.roles.enum';
 
 export type UserDocument = User & Document;
 
@@ -23,10 +24,10 @@ export class User implements IUser {
 
   @Prop({
     required: true,
-    enum: ['client', 'admin', 'manager'],
-    default: 'client',
+    enum: Object.values(Role),
+    default: Role.Client,
   })
-  role: string;
+  role: Role;
 
   constructor(data: IUser) {
     this.email = data.email;
