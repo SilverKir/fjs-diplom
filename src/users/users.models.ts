@@ -28,7 +28,7 @@ export class User {
     enum: Object.values(Role),
     default: Role.Client,
   })
-  role: Role;
+  role: string;
 
   constructor(data: IUser) {
     this.email = data.email;

@@ -10,12 +10,7 @@ import { Response } from 'express';
 
 import { LocalAuthGuard, Public, UnconfirmedGuard, AuthService } from '.';
 
-import {
-  UsersService,
-  CreateClientUserDto,
-  IUserAnswer,
-  User,
-} from 'src/users';
+import { UsersService, CreateUserDto, IUserAnswer, User } from 'src/users';
 
 @Controller('api')
 export class AuthController {
@@ -48,10 +43,10 @@ export class AuthController {
   @Public()
   @UseGuards(UnconfirmedGuard)
   @Post('client/register')
-  async create(@Body() createUser: CreateClientUserDto): Promise<IUserAnswer> {
+  async create(@Body() createUser: CreateUserDto): Promise<IUserAnswer> {
     const result = await this.usersService.create(createUser);
     return {
-      id: result._id.toString(),
+      id: result._id,
       email: result.email,
       name: result.name,
     };

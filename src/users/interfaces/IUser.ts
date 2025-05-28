@@ -1,9 +1,7 @@
-import { Role } from '../users.roles.enum';
-
 export interface IUser {
   email: string;
   password: string;
   name: string;
   contactPhone?: string;
-  role?: Role;
+  role?: string;
 }

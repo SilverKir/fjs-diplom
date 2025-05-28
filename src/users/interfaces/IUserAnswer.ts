@@ -1,8 +1,8 @@
-import { Role } from '../users.roles.enum';
+import { ObjectId } from 'mongoose';
 export interface IUserAnswer {
-  id: string;
+  id: ObjectId | string;
   email: string;
   name: string;
   contactPhone?: string;
-  role?: Role;
+  role?: string;
 }
