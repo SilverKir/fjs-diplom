@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Connection, Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 
-import { IUser, IUserService, ISearchUserParams } from './interfaces';
+import { IUserService, ISearchUserParams, IUser } from './interfaces';
 import { User, UserDocument } from './users.models';
 
 @Injectable()
@@ -12,8 +12,13 @@ export class UsersService implements IUserService {
     @InjectConnection() private connection: Connection,
   ) {}
 
-  async create(data: Partial<IUser>): Promise<User> {
-    const user = new this.UserModel(data);
+  async create(data: IUser): Promise<User> {
+    const existingUser = await this.findByEmail(data.email);
+    if (existingUser) {
+      throw new BadRequestException('User email must be unique');
+    }
+    const newUser = new User(data);
+    const user = new this.UserModel(newUser);
     return await user.save();
   }
 

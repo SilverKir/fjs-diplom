@@ -1,12 +1,10 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  Request,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+
+import { Request } from 'express';
+
+import { AuthService } from './auth.service';
 
 import { cookieExtractor } from './auth.cookies.extractor';
-import { AuthService } from './auth.service';
 
 @Injectable()
 export class UnconfirmedGuard implements CanActivate {
@@ -19,6 +17,7 @@ export class UnconfirmedGuard implements CanActivate {
     if (!token) {
       return true;
     }
-    return await this.authService.validateByToken(token);
+    const user = await this.authService.validateByToken(token);
+    return user ? false : true;
   }
 }

@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 
 import { IUser } from './interfaces';
 import { Role } from './users.roles.enum';
@@ -7,7 +8,7 @@ import { Role } from './users.roles.enum';
 export type UserDocument = User & Document;
 
 @Schema()
-export class User implements IUser {
+export class User {
   _id: ObjectId | string;
 
   @Prop({ required: true, unique: true })
@@ -31,10 +32,10 @@ export class User implements IUser {
 
   constructor(data: IUser) {
     this.email = data.email;
-    this.passwordHash = data.passwordHash;
+    this.passwordHash = bcrypt.hashSync(data.password, 10);
     this.name = data.name;
     this.contactPhone = data.contactPhone || '';
-    this.role = data.role;
+    this.role = data.role || Role.Client;
   }
 }
 export const UserShema = SchemaFactory.createForClass(User);

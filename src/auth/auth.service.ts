@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/users/users.models';
 import { JwtService } from '@nestjs/jwt';
@@ -23,37 +23,35 @@ export class AuthService {
   }
 
   async validateById(id: string): Promise<User | null> {
-    const user = await this.usersService.findById(id);
-    return user ? user : null;
-  }
-
-  async validateByToken(token: string): Promise<boolean> {
     try {
-      await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
-      });
-      return false;
+      const user = await this.usersService.findById(id);
+      return user ? user : null;
     } catch {
-      return true;
+      return null;
     }
   }
 
-  async login(req, response: Response) {
-    const user: User = req.user;
-    const answer = {
-      email: user.email,
-      name: user.name,
-      contactPhone: user.contactPhone,
-    };
-    const payload = {
-      id: user._id.toString(),
-    };
-    const id = this.jwtService.sign(payload);
-    response.cookie('id', id);
-    return answer;
+  async validateByToken(token: string): Promise<User | null> {
+    try {
+      const payload: { id: string } = await this.jwtService.verifyAsync(token, {
+        secret: jwtConstants.secret,
+      });
+      return await this.validateById(payload.id);
+    } catch {
+      return null;
+    }
   }
 
-  async logout(response: Response) {
+  async login(req: Request, response: Response) {
+    const user = req.user as User;
+    const payload = {
+      id: user._id,
+    };
+    const id = await this.jwtService.signAsync(payload);
+    response.cookie('id', id);
+  }
+
+  logout(response: Response) {
     response.clearCookie('id');
   }
 }
