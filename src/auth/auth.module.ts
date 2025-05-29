@@ -8,7 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { LocalStrategy } from './local.stratagy';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthenticateGuard } from './auth.guard';
 import { AuthController } from './auth.controller';
 
 @Module({
@@ -24,10 +24,9 @@ import { AuthController } from './auth.controller';
     AuthService,
     LocalStrategy,
     JwtStrategy,
-
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: AuthenticateGuard,
     },
   ],
   controllers: [AuthController],

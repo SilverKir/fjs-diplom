@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { LocalAuthGuard, Public, UnconfirmedGuard, AuthService } from '.';
+import { LocalAuthGuard, AuthService, NotAuth } from '.';
 
 import { UsersService, CreateUserDto, IUserAnswer, User } from 'src/users';
 
@@ -19,9 +19,8 @@ export class AuthController {
     private usersService: UsersService,
   ) {}
 
-  @Public()
+  @NotAuth()
   @UseGuards(LocalAuthGuard)
-  @UseGuards(UnconfirmedGuard)
   @Post('auth/login')
   async login(@Request() req, @Res({ passthrough: true }) response: Response) {
     await this.authService.login(req, response);
@@ -40,8 +39,7 @@ export class AuthController {
     this.authService.logout(res);
   }
 
-  @Public()
-  @UseGuards(UnconfirmedGuard)
+  @NotAuth()
   @Post('client/register')
   async create(@Body() createUser: CreateUserDto): Promise<IUserAnswer> {
     const result = await this.usersService.create(createUser);

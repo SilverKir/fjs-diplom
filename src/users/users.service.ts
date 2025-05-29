@@ -41,10 +41,12 @@ export class UsersService implements IUserService {
 
     if (params.limit > 0) {
       return users.slice(
-        params.offset > 0 ? params.offset - 1 : 0,
-        params.offset > 0 ? params.limit + params.offset - 1 : params.limit - 1,
+        params.offset > 0 ? params.offset : 0,
+        params.offset > 0
+          ? Number(params.limit) + Number(params.offset)
+          : params.limit,
       );
     }
-    return users.slice(params.offset > 0 ? params.offset - 1 : 0);
+    return users.slice(params.offset > 0 ? params.offset : 0);
   }
 }

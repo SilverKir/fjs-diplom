@@ -38,4 +38,4 @@ export class User {
     this.role = data.role || Role.Client;
   }
 }
-export const UserShema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(User);
