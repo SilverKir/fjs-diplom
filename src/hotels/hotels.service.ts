@@ -7,6 +7,7 @@ import {
   UpdateHotelParams,
 } from './interfaces';
 import { Hotel, HotelDocument } from './models';
+import { AddHotelDto } from './dto/AddHotelDto';
 
 @Injectable()
 export class HotelsService implements IHotelService {
@@ -14,19 +15,32 @@ export class HotelsService implements IHotelService {
     @InjectModel(Hotel.name) private HotelModel: Model<HotelDocument>,
     @InjectConnection() private connection: Connection,
   ) {}
-  create(data: any): Promise<Hotel> {
-    throw new Error('Method not implemented.');
+  async create(data: AddHotelDto): Promise<Hotel> {
+    const newHotel = { ...data, createdAt: new Date(), updatedAt: new Date() };
+    const hotel = new this.HotelModel(newHotel);
+    return await hotel.save();
   }
-  findById(id: string | Schema.Types.ObjectId): Promise<Hotel> {
-    throw new Error('Method not implemented.');
+
+  async findById(id: string | Schema.Types.ObjectId): Promise<Hotel | null> {
+    return await this.HotelModel.findById(id).select('-__v').exec();
   }
-  search(params: SearchHotelParams): Promise<Hotel[]> {
-    throw new Error('Method not implemented.');
+
+  async search(params: SearchHotelParams): Promise<Hotel[] | null> {
+    const hotels = await this.HotelModel.find({
+      title: { $regex: params.title, $options: 'i' },
+    })
+      .select('-__v')
+      .exec();
+    const limit = params.limit ? params.limit : hotels.length;
+    return hotels.slice(params.offset, Number(limit) + Number(params.offset));
   }
-  update(
+
+  async update(
     id: string | Schema.Types.ObjectId,
     data: UpdateHotelParams,
-  ): Promise<Hotel> {
-    throw new Error('Method not implemented.');
+  ): Promise<Hotel | null> {
+    return await this.HotelModel.findByIdAndUpdate(id, data)
+      .select('-__v')
+      .exec();
   }
 }

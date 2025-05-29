@@ -38,15 +38,7 @@ export class UsersService implements IUserService {
     })
       .select('-__v')
       .exec();
-
-    if (params.limit > 0) {
-      return users.slice(
-        params.offset > 0 ? params.offset : 0,
-        params.offset > 0
-          ? Number(params.limit) + Number(params.offset)
-          : params.limit,
-      );
-    }
-    return users.slice(params.offset > 0 ? params.offset : 0);
+    const limit = params.limit ? params.limit : users.length;
+    return users.slice(params.offset, Number(limit) + Number(params.offset));
   }
 }
