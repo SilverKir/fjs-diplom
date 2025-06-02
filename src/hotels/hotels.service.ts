@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { Schema, Connection, Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import {
@@ -7,7 +7,6 @@ import {
   UpdateHotelParams,
 } from './interfaces';
 import { Hotel, HotelDocument } from './models';
-import { AddHotelDto } from './dto/AddHotelDto';
 
 @Injectable()
 export class HotelsService implements IHotelService {
@@ -15,7 +14,8 @@ export class HotelsService implements IHotelService {
     @InjectModel(Hotel.name) private HotelModel: Model<HotelDocument>,
     @InjectConnection() private connection: Connection,
   ) {}
-  async create(data: AddHotelDto): Promise<Hotel> {
+
+  async create(data: Partial<Hotel>): Promise<Hotel> {
     const newHotel = { ...data, createdAt: new Date(), updatedAt: new Date() };
     const hotel = new this.HotelModel(newHotel);
     return await hotel.save();
@@ -26,21 +26,33 @@ export class HotelsService implements IHotelService {
   }
 
   async search(params: SearchHotelParams): Promise<Hotel[] | null> {
+    const title = params.title ? params.title : '';
     const hotels = await this.HotelModel.find({
-      title: { $regex: params.title, $options: 'i' },
+      title: { $regex: title, $options: 'i' },
     })
       .select('-__v')
       .exec();
     const limit = params.limit ? params.limit : hotels.length;
-    return hotels.slice(params.offset, Number(limit) + Number(params.offset));
+    const offset = params.offset ? params.offset : 0;
+    return hotels.slice(offset, Number(limit) + Number(offset));
   }
 
   async update(
     id: string | Schema.Types.ObjectId,
     data: UpdateHotelParams,
-  ): Promise<Hotel | null> {
-    return await this.HotelModel.findByIdAndUpdate(id, data)
-      .select('-__v')
-      .exec();
+  ): Promise<Hotel> {
+    try {
+      const hotel = await this.HotelModel.findById(id);
+      if (!hotel) {
+        throw new BadRequestException('No hotel to update');
+      }
+      hotel.title = data.title;
+      hotel.description = data.description;
+      hotel.updatedAt = new Date();
+      await hotel.save();
+      return hotel;
+    } catch {
+      throw new BadRequestException('Wrong ID');
+    }
   }
 }

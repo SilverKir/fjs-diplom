@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { MulterModule } from '@nestjs/platform-express';
+
 import { HotelsController } from './hotels.controller';
 import { HotelsService } from './hotels.service';
 
 import { Hotel, HotelSchema, HotelRoom, HotelRoomSchema } from './models';
+import { HotelsRoomService } from './hotels-room.service';
+import { multerConfig } from './config/multer.config';
 
 @Module({
   imports: [
@@ -11,8 +15,9 @@ import { Hotel, HotelSchema, HotelRoom, HotelRoomSchema } from './models';
       { name: Hotel.name, schema: HotelSchema },
       { name: HotelRoom.name, schema: HotelRoomSchema },
     ]),
+    MulterModule.register({ dest: multerConfig.dest }),
   ],
   controllers: [HotelsController],
-  providers: [HotelsService],
+  providers: [HotelsService, HotelsRoomService],
 })
 export class HotelsModule {}
