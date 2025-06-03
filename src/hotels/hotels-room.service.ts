@@ -4,7 +4,6 @@ import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { IHotelRoomService, SearchRoomsParams } from './interfaces';
 import { HotelRoom, RoomDocument } from './models';
 
-
 @Injectable()
 export class HotelsRoomService implements IHotelRoomService {
   constructor(
@@ -24,9 +23,14 @@ export class HotelsRoomService implements IHotelRoomService {
     return await room.save();
   }
 
-  findById(id: string | Schema.Types.ObjectId): Promise<HotelRoom> {
-    throw new Error('Method not implemented.');
+  async findById(id: string | Schema.Types.ObjectId): Promise<HotelRoom> {
+    const result = await this.RoomModel.findById(id).select('-__v').exec();
+    if (result) {
+      return result;
+    }
+    throw new BadRequestException('Wrong ID');
   }
+
   search(params: SearchRoomsParams): Promise<HotelRoom[]> {
     throw new Error('Method not implemented.');
   }

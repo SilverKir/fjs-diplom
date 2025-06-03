@@ -4,3 +4,4 @@ export { IHotelService } from './IHotelService';
 export { UpdateHotelParams } from './UpdateHotelParams';
 export { SearchHotelParams } from './SearchHotelParams';
 export { IHotelAnswer } from './IHotelAnswer';
+export { IRoomAnswer } from './IRoomAnswer';

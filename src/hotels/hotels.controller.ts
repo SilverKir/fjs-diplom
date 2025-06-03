@@ -13,12 +13,12 @@ import {
 import { ObjectId } from 'mongoose';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
-import { Roles } from 'src/auth';
+import { Roles, Public } from 'src/auth';
 import { Role } from 'src/users';
 
 import { HotelsService } from './hotels.service';
 import { AddHotelDto, AddRoomDto } from './dto';
-import { IHotelAnswer, UpdateHotelParams } from './interfaces';
+import { IHotelAnswer, IRoomAnswer, UpdateHotelParams } from './interfaces';
 import { HotelsRoomService } from './hotels-room.service';
 import { multerOptions } from './config/multer.config';
 
@@ -84,7 +84,7 @@ export class HotelsController {
     @Body() createRoom: AddRoomDto,
     @UploadedFiles()
     files?: Array<Express.Multer.File>,
-  ) {
+  ): Promise<Partial<IRoomAnswer>> {
     const hotel = await this.hotelService.findById(createRoom.hotelId);
     if (hotel) {
       let dowloadImages: string[] = [];
@@ -111,5 +111,23 @@ export class HotelsController {
       };
     }
     throw new BadRequestException('Wrong hotel id');
+  }
+
+  @Public()
+  @Get('common/hotel-rooms/:id')
+  async getRoom(
+    @Param('id') id: string | ObjectId,
+  ): Promise<Partial<IRoomAnswer>> {
+    const room = await this.roomServise.findById(id);
+    return {
+      id: room._id,
+      description: room.description,
+      images: room.images,
+      hotel: {
+        id: room.hotel._id,
+        title: room.hotel.title,
+        description: room.hotel.description,
+      },
+    };
   }
 }

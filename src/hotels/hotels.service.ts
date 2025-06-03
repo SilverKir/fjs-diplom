@@ -21,8 +21,12 @@ export class HotelsService implements IHotelService {
     return await hotel.save();
   }
 
-  async findById(id: string | Schema.Types.ObjectId): Promise<Hotel | null> {
-    return await this.HotelModel.findById(id).select('-__v').exec();
+  async findById(id: string | Schema.Types.ObjectId): Promise<Hotel> {
+    const result = await this.HotelModel.findById(id).select('-__v').exec();
+    if (result) {
+      return result;
+    }
+    throw new BadRequestException('Wrong ID');
   }
 
   async search(params: SearchHotelParams): Promise<Hotel[] | null> {
