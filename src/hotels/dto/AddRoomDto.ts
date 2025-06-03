@@ -7,4 +7,6 @@ export class AddRoomDto {
   hotelId: string;
 
   images?: string[];
+
+  isEnabled?: boolean;
 }

@@ -45,18 +45,14 @@ export class HotelsService implements IHotelService {
     id: string | Schema.Types.ObjectId,
     data: UpdateHotelParams,
   ): Promise<Hotel> {
-    try {
-      const hotel = await this.HotelModel.findById(id);
-      if (!hotel) {
-        throw new BadRequestException('No hotel to update');
-      }
-      hotel.title = data.title;
-      hotel.description = data.description;
-      hotel.updatedAt = new Date();
-      await hotel.save();
-      return hotel;
-    } catch {
+    const hotel = await this.HotelModel.findById(id);
+    if (!hotel) {
       throw new BadRequestException('Wrong ID');
     }
+    hotel.title = data.title;
+    hotel.description = data.description;
+    hotel.updatedAt = new Date();
+    await hotel.save();
+    return hotel;
   }
 }

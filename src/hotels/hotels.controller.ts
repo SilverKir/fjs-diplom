@@ -8,7 +8,6 @@ import {
   Put,
   UseInterceptors,
   UploadedFiles,
-  BadRequestException,
 } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -86,31 +85,29 @@ export class HotelsController {
     files?: Array<Express.Multer.File>,
   ): Promise<Partial<IRoomAnswer>> {
     const hotel = await this.hotelService.findById(createRoom.hotelId);
-    if (hotel) {
-      let dowloadImages: string[] = [];
-      if (files) {
-        dowloadImages = files.map((file) => {
-          return file.filename;
-        });
-      }
-      const room = await this.roomServise.create({
-        hotel: hotel,
-        description: createRoom.description,
-        images: dowloadImages,
+
+    let dowloadImages: string[] = [];
+    if (files) {
+      dowloadImages = files.map((file) => {
+        return file.filename;
       });
-      return {
-        id: room._id,
-        description: room.description,
-        images: room.images,
-        isEnabled: room.isEnabled,
-        hotel: {
-          id: room.hotel._id,
-          title: room.hotel.title,
-          description: room.hotel.description,
-        },
-      };
     }
-    throw new BadRequestException('Wrong hotel id');
+    const room = await this.roomServise.create({
+      hotel: hotel,
+      description: createRoom.description,
+      images: dowloadImages,
+    });
+    return {
+      id: room._id,
+      description: room.description,
+      images: room.images,
+      isEnabled: room.isEnabled,
+      hotel: {
+        id: room.hotel._id,
+        title: room.hotel.title,
+        description: room.hotel.description,
+      },
+    };
   }
 
   @Public()
@@ -119,14 +116,54 @@ export class HotelsController {
     @Param('id') id: string | ObjectId,
   ): Promise<Partial<IRoomAnswer>> {
     const room = await this.roomServise.findById(id);
+    const hotel = await this.hotelService.findById(room.hotel._id);
     return {
       id: room._id,
       description: room.description,
       images: room.images,
       hotel: {
         id: room.hotel._id,
-        title: room.hotel.title,
-        description: room.hotel.description,
+        title: hotel.title,
+        description: hotel.description,
+      },
+    };
+  }
+
+  @Roles(Role.Admin)
+  @Put('admin/hotel-rooms/:id')
+  @UseInterceptors(FilesInterceptor('images', 10, multerOptions))
+  async updateHotelRoom(
+    @Param('id') id: string | ObjectId,
+    @Body() createRoom: AddRoomDto,
+    @UploadedFiles()
+    files?: Array<Express.Multer.File>,
+  ): Promise<Partial<IRoomAnswer>> {
+    const room = await this.roomServise.findById(id);
+    const hotel = await this.hotelService.findById(createRoom.hotelId);
+    const initialImages = room.images;
+    const savedImages = createRoom.images;
+    this.roomServise.updateFiles(initialImages, savedImages);
+    let dowloadImages: string[] = [];
+    if (files) {
+      dowloadImages = files.map((file) => {
+        return file.filename;
+      });
+    }
+    const updatedRoom = await this.roomServise.update(id, {
+      hotel: hotel,
+      description: createRoom.description,
+      images: savedImages ? savedImages.concat(dowloadImages) : dowloadImages,
+      isEnabled: createRoom.isEnabled ? createRoom.isEnabled : room.isEnabled,
+    });
+    return {
+      id: updatedRoom._id,
+      description: updatedRoom.description,
+      images: updatedRoom.images,
+      isEnabled: updatedRoom.isEnabled,
+      hotel: {
+        id: updatedRoom.hotel._id,
+        title: hotel.title,
+        description: hotel.description,
       },
     };
   }

@@ -60,7 +60,6 @@ export const multerOptions = {
       cb: (error: Error | null, filename: string) => void,
     ) => {
       // Calling the callback passing the random name generated with the original extension name
-
       cb(null, `${uuid()}${extname(file.originalname)}`);
     },
   }),
