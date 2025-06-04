@@ -3,7 +3,7 @@ import { Document, ObjectId } from 'mongoose';
 
 export type HotelDocument = Hotel & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Hotel {
   _id: ObjectId | string;
 
@@ -12,12 +12,6 @@ export class Hotel {
 
   @Prop()
   description: string;
-
-  @Prop({ required: true })
-  createdAt: Date;
-
-  @Prop({ required: true })
-  updatedAt: Date;
 }
 
 export const HotelSchema = SchemaFactory.createForClass(Hotel);

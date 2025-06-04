@@ -19,8 +19,6 @@ export class HotelsRoomService implements IHotelRoomService {
   async create(data: Partial<HotelRoom>): Promise<HotelRoom> {
     const newRoom = {
       ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
       isEnabled: true,
     };
     const room = new this.RoomModel(newRoom);
@@ -60,7 +58,6 @@ export class HotelsRoomService implements IHotelRoomService {
     if (data.images) room.images = data.images;
     if (data.hotel) room.hotel = data.hotel;
     if (data.isEnabled) room.isEnabled = data.isEnabled;
-    room.updatedAt = new Date();
     await room.save();
     return room;
   }

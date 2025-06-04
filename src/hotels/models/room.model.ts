@@ -4,7 +4,7 @@ import * as mongoose from 'mongoose';
 import { Hotel } from './hotel.model';
 
 export type RoomDocument = HotelRoom & Document;
-@Schema()
+@Schema({ timestamps: true })
 export class HotelRoom {
   _id: ObjectId | string;
 
@@ -16,12 +16,6 @@ export class HotelRoom {
 
   @Prop({ default: [] })
   images: string[];
-
-  @Prop({ required: true })
-  createdAt: Date;
-
-  @Prop({ required: true })
-  updatedAt: Date;
 
   @Prop({ required: true, default: true })
   isEnabled: boolean;

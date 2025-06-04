@@ -16,7 +16,7 @@ export class HotelsService implements IHotelService {
   ) {}
 
   async create(data: Partial<Hotel>): Promise<Hotel> {
-    const newHotel = { ...data, createdAt: new Date(), updatedAt: new Date() };
+    const newHotel = { ...data };
     const hotel = new this.HotelModel(newHotel);
     return await hotel.save();
   }
@@ -51,7 +51,6 @@ export class HotelsService implements IHotelService {
     }
     hotel.title = data.title;
     hotel.description = data.description;
-    hotel.updatedAt = new Date();
     await hotel.save();
     return hotel;
   }

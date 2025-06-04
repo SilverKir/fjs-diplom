@@ -1,20 +1,12 @@
-import { IsDate, IsNotEmpty } from 'class-validator';
-import { ReservationDto } from '../interfaces/ReservationDto';
-import { Schema } from 'mongoose';
+import { IsNotEmpty } from 'class-validator';
 
-export class AddReservationDto implements ReservationDto {
-  userId: string | Schema.Types.ObjectId;
-
-  hotelId: string | Schema.Types.ObjectId;
+export class AddReservationDto {
+  @IsNotEmpty()
+  hotelRoom: string;
 
   @IsNotEmpty()
-  roomId: string | Schema.Types.ObjectId;
+  startDate: string;
 
   @IsNotEmpty()
-  @IsDate()
-  dateStart: Date;
-
-  @IsNotEmpty()
-  @IsDate()
-  dateEnd: Date;
+  endDate: string;
 }
