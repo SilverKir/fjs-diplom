@@ -141,7 +141,13 @@ export class HotelsController {
     const room = await this.roomServise.findById(id);
     const hotel = await this.hotelService.findById(createRoom.hotelId);
     const initialImages = room.images;
-    const savedImages = createRoom.images;
+    let savedImages: string[] | undefined = [];
+    if (typeof createRoom.images === 'string') {
+      savedImages.push(createRoom.images);
+    } else {
+      savedImages = createRoom.images;
+    }
+
     this.roomServise.updateFiles(initialImages, savedImages);
     let dowloadImages: string[] = [];
     if (files) {

@@ -1,13 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Schema, Connection, Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { multerConfig } from './config/multer.config';
 
 import { IHotelRoomService, SearchRoomsParams } from './interfaces';
 import { HotelRoom, RoomDocument } from './models';
-import { exit } from 'process';
 
 @Injectable()
 export class HotelsRoomService implements IHotelRoomService {
@@ -36,8 +35,17 @@ export class HotelsRoomService implements IHotelRoomService {
     throw new BadRequestException('Wrong ID');
   }
 
-  search(params: SearchRoomsParams): Promise<HotelRoom[]> {
-    throw new Error('Method not implemented.');
+  async search(params: SearchRoomsParams): Promise<HotelRoom[]> {
+    const isEnabled = params.isEnabled ? params.isEnabled : true;
+    const rooms = await this.RoomModel.find({
+      isEnabled: isEnabled,
+      hotel: params.hotel,
+    })
+      .select('-__v')
+      .exec();
+    const limit = params.limit ? params.limit : rooms.length;
+    const offset = params.offset ? params.offset : 0;
+    return rooms.slice(offset, Number(limit) + Number(offset));
   }
 
   async update(
@@ -59,7 +67,9 @@ export class HotelsRoomService implements IHotelRoomService {
 
   imageFileDelete(fileName: string): void {
     const filePath = path.join(multerConfig.dest, fileName);
-    fs.unlinkSync(filePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
   }
 
   arrayDifference(
@@ -68,7 +78,7 @@ export class HotelsRoomService implements IHotelRoomService {
   ): string[] {
     if (!initialArr) return [];
     if (!savedArr) return initialArr;
-    return savedArr.filter((item) => !initialArr.includes(item));
+    return initialArr.filter((item) => !savedArr.includes(item));
   }
 
   updateFiles(initialArr: string[], savedArr: string[] | undefined): void {
