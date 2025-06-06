@@ -2,7 +2,12 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { ObjectId, Model, Connection } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 
-import { Hotel, HotelSchema, HotelRoom, RoomDocument } from '../hotels/models';
+import {
+  HotelRoom,
+  RoomDocument,
+  Hotel,
+  HotelDocument,
+} from '../hotels/models';
 import {
   IReservation,
   ReservationDto,
@@ -17,18 +22,13 @@ export class ReservationService implements IReservation {
     private reservationModel: Model<ReservationDocument>,
     @InjectModel(HotelRoom.name)
     private hotelRoomModel: Model<RoomDocument>,
+    @InjectModel(Hotel.name)
+    private hotelModel: Model<HotelDocument>,
     @InjectConnection()
     private connection: Connection,
   ) {}
 
   async addReservation(data: ReservationDto): Promise<Reservation> {
-    const room = await this.hotelRoomModel
-      .findById(data.roomId)
-      .select('-__v')
-      .exec();
-    if (!room || !room.isEnabled) {
-      throw new BadRequestException('Wrong ID');
-    }
     const reservation = await this.reservationModel
       .find({
         $and: [
@@ -38,7 +38,7 @@ export class ReservationService implements IReservation {
         ],
       })
       .exec();
-    if (reservation) {
+    if (reservation.length > 0) {
       throw new BadRequestException('Already taken');
     }
     return await this.reservationModel.create(data);
@@ -50,9 +50,59 @@ export class ReservationService implements IReservation {
     });
   }
 
-  getReservations(
+  async getReservations(
     filter: ReservationSearchOptions,
   ): Promise<Array<Reservation>> {
-    throw new Error('Method not implemented.');
+    return await this.reservationModel
+      .find({
+        $and: [
+          { userId: filter.userId },
+          { dateStart: { $lte: filter.dateEnd } },
+          { dateEnd: { $gte: filter.dateStart } },
+        ],
+      })
+      .select('-__v')
+      .exec()
+      .catch(() => {
+        throw new BadRequestException('Wrong request');
+      });
+  }
+
+  async findReservationById(id: ObjectId | string): Promise<Reservation> {
+    const result = await this.reservationModel
+      .findById(id)
+      .select('-__v')
+      .exec()
+      .catch(() => {
+        throw new BadRequestException('Wrong ID');
+      });
+
+    if (result) {
+      return result;
+    }
+    throw new BadRequestException('Wrong ID');
+  }
+
+  async findHotelById(id: ObjectId | string): Promise<Hotel> {
+    const result = await this.hotelModel
+      .findById(id)
+      .select('-__v')
+      .exec()
+      .catch(() => {
+        throw new BadRequestException('Wrong HotelID');
+      });
+
+    if (result) {
+      return result;
+    }
+    throw new BadRequestException('Wrong HotelID');
+  }
+
+  async findRoomById(id: string): Promise<HotelRoom> {
+    const result = await this.hotelRoomModel.findById(id).select('-__v').exec();
+    if (!result || !result.isEnabled) {
+      throw new BadRequestException('Wrong roomID');
+    }
+    return result;
   }
 }

@@ -26,6 +26,7 @@ export class AuthController {
     await this.authService.login(req, response);
     const user = req.user as User;
     const answer = {
+      id: user._id,
       email: user.email,
       name: user.name,
       contactPhone: user.contactPhone,
