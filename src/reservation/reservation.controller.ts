@@ -5,7 +5,6 @@ import {
   Request,
   Param,
   Delete,
-  BadRequestException,
   ForbiddenException,
   Get,
 } from '@nestjs/common';
@@ -50,6 +49,34 @@ export class ReservationController {
   }
 
   @Roles(Role.Client)
+  @Get('client/reservations')
+  async getReservations(@Request() req): Promise<IReservationAnswer[]> {
+    const userId = req.user._id as string;
+    const reservations = await this.reservationService.getReservations({
+      userId: userId,
+      dateStart: new Date(-8640000000000000),
+      dateEnd: new Date(8640000000000000),
+    });
+    if (reservations.length > 0) {
+      return reservations.map((obj) => {
+        return {
+          startDate: obj.dateStart.toISOString(),
+          endDate: obj.dateEnd.toISOString(),
+          hotelRoom: {
+            description: obj.roomId.description,
+            images: obj.roomId.images,
+          },
+          hotel: {
+            title: obj.hotelId.title,
+            description: obj.hotelId.description,
+          },
+        };
+      });
+    }
+    return [];
+  }
+
+  @Roles(Role.Client)
   @Delete('client/reservations/:id')
   async deleteReservation(
     @Request() req,
@@ -77,18 +104,24 @@ export class ReservationController {
       return reservations.map((obj) => {
         return {
           startDate: obj.dateStart.toISOString(),
-  endDate: obj.dateEnd.toISOString(),
-  hotelRoom: {
-    description: string,
-    images: string[],
-  },
-  hotel: {
-    title: string,
-    description: string,
-  },
-};
+          endDate: obj.dateEnd.toISOString(),
+          hotelRoom: {
+            description: obj.roomId.description,
+            images: obj.roomId.images,
+          },
+          hotel: {
+            title: obj.hotelId.title,
+            description: obj.hotelId.description,
+          },
+        };
       });
     }
     return [];
+  }
+
+  @Roles(Role.Manager)
+  @Delete('manager/reservations/:id')
+  async deleteUserReservation(@Param('id') id: string): Promise<void> {
+    await this.reservationService.removeReservation(id);
   }
 }
