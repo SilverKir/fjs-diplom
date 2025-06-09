@@ -11,11 +11,14 @@ export class Message {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   author: User;
 
-  @Prop()
-  messages: Message[];
+  @Prop({ required: true })
+  sentAt: Date;
+
+  @Prop({ required: true })
+  text: string;
 
   @Prop()
-  isActive: boolean;
+  readAt: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

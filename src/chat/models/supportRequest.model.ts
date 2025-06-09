@@ -2,6 +2,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { User } from 'src/users';
+import { Message } from './message.model';
 
 export type SupportRequestDocument = SupportRequest & Document;
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })
@@ -10,6 +11,8 @@ export class SupportRequest {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
+
+  createdAt: Date;
 
   @Prop()
   messages: Message[];

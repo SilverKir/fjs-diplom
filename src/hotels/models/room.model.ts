@@ -17,6 +17,9 @@ export class HotelRoom {
   @Prop({ default: [] })
   images: string[];
 
+  createdAt: Date;
+  updatedAt: Date;
+
   @Prop({ required: true, default: true })
   isEnabled: boolean;
 }

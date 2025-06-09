@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongoose';
 
 import { MarkMessagesAsReadDto } from './';
+import { Message } from '../models';
 
 export interface ISupportRequestEmployeeService {
   markMessagesAsRead(params: MarkMessagesAsReadDto);

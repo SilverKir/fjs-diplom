@@ -2,6 +2,7 @@ import { ObjectId } from 'mongoose';
 
 import { GetChatListParams } from './';
 import { SendMessageDto } from './';
+import { SupportRequest, Message } from '../models';
 
 export interface ISupportRequestService {
   findSupportRequests(params: GetChatListParams): Promise<SupportRequest[]>;

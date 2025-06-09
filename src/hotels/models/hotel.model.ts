@@ -12,6 +12,9 @@ export class Hotel {
 
   @Prop()
   description: string;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const HotelSchema = SchemaFactory.createForClass(Hotel);
