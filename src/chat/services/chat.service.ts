@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { ObjectId, Model, Connection } from 'mongoose';
 
@@ -27,8 +31,15 @@ export class SupportRequestService implements ISupportRequestService {
   async findSupportRequests(
     params: GetChatListParams,
   ): Promise<SupportRequest[]> {
+    type Query = { user?: ObjectId | string; isActive: boolean };
+    const query: Query = { isActive: params.isActive };
+    if (params.user) {
+      query.user = params.user;
+    }
     return await this.requestModel
-      .find({ user: params.user }, { isActive: params.isActive })
+      .find(query)
+      .populate('user')
+      .select('-__v')
       .exec()
       .catch(() => {
         throw new BadRequestException('Wrong GetChatListParams');
@@ -55,16 +66,33 @@ export class SupportRequestService implements ISupportRequestService {
   }
 
   async getMessages(supportRequest: ObjectId | string): Promise<Message[]> {
-    const request = await this.requestModel.findById(supportRequest);
-    if (request) {
-      return request.messages;
-    }
-    return [];
+    const result = await this.requestModel
+      .findById(supportRequest)
+      .populate({ path: 'messages', populate: { path: 'author' } })
+      .exec();
+    if (!result) return [];
+
+    return result.messages;
   }
 
   subscribe(
     handler: (supportRequest: SupportRequest, message: Message) => void,
   ): () => void {
     throw new Error('Method not implemented.');
+  }
+
+  async validate(
+    supportRequest: ObjectId | string,
+    user: ObjectId | string,
+    role: string,
+  ): Promise<void> {
+    if (role == 'manager') return;
+    const request = await this.requestModel.findById(supportRequest);
+    if (!request) {
+      throw new BadRequestException('Invalid request');
+    }
+    if (user.toString() !== request.user.toString()) {
+      throw new ForbiddenException('Wrong user');
+    }
   }
 }

@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { ChatController } from './chat.controller';
+import { User, UserSchema } from 'src/users';
+
+import { ChatClientController, ChatEmpoloyeeController } from './controllers';
 import {
   SupportRequestService,
   SupportRequestClientService,
@@ -19,9 +21,10 @@ import {
     MongooseModule.forFeature([
       { name: SupportRequest.name, schema: SupportRequestSchema },
       { name: Message.name, schema: MessageSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [ChatController],
+  controllers: [ChatClientController, ChatEmpoloyeeController],
   providers: [
     SupportRequestService,
     SupportRequestClientService,

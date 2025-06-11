@@ -3,7 +3,7 @@ import { Connection, Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 
 import { IUserService, ISearchUserParams, IUser } from './interfaces';
-import { User, UserDocument } from './users.models';
+import { User, UserDocument } from './users.model';
 
 @Injectable()
 export class UsersService implements IUserService {

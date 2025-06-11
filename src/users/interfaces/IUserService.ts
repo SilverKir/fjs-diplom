@@ -1,5 +1,5 @@
 import { ISearchUserParams, IUser } from '../interfaces';
-import { User } from '../users.models';
+import { User } from '../users.model';
 
 export interface IUserService {
   create(data: Partial<IUser>): Promise<User>;

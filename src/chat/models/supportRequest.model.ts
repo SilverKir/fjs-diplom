@@ -12,9 +12,10 @@ export class SupportRequest {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
 
+  @Prop()
   createdAt: Date;
 
-  @Prop()
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }] })
   messages: Message[];
 
   @Prop()

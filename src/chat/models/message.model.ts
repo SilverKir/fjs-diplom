@@ -19,6 +19,8 @@ export class Message {
 
   @Prop()
   readAt: Date;
+
+  createdAt: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

@@ -3,4 +3,4 @@ export {
   SupportRequest,
   SupportRequestDocument,
   SupportRequestSchema,
-} from './SupportRequest.model';
+} from './supportRequest.model';

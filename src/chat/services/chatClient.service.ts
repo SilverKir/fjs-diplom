@@ -62,6 +62,7 @@ export class SupportRequestClientService
   async getUnreadCount(supportRequest: ObjectId | string): Promise<Message[]> {
     const request: SupportRequest | null = await this.requestModel
       .findById(supportRequest)
+      .populate('messages')
       .catch(() => {
         throw new BadRequestException('Wrong RequestID');
       });

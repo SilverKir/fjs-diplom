@@ -6,3 +6,4 @@ export { ISupportRequestService } from './ISupportRequestService';
 export { MarkMessagesAsReadDto } from './MarkMessagesAsReadDto';
 export { SendMessageDto } from './SendMessageDto';
 export { RequestAnswer } from './RequestAnswer';
+export { MessageAnswer } from './MessageAnswer';
