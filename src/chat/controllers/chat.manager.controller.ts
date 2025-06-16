@@ -1,52 +1,29 @@
-import { Body, Controller, Post, Request, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 
 import {
-  SupportRequestClientService,
+  SupportRequestEmployeeService,
   SupportRequestService,
 } from '../services';
 import { Roles } from 'src/auth';
 import { Role } from 'src/users';
-import { ChatDto } from '../dto';
 import { RequestAnswer } from '../interfaces';
 
 @Controller('api')
-export class ChatClientController {
+export class ChatEmpoloyeeController {
   constructor(
-    private clientService: SupportRequestClientService,
+    private managerService: SupportRequestEmployeeService,
     private chatService: SupportRequestService,
   ) {}
 
-  @Roles(Role.Client)
-  @Post('client/support-requests')
-  async createRequest(
-    @Request() req,
-    @Body() data: ChatDto,
-  ): Promise<Partial<RequestAnswer>[]> {
-    const chatReq = await this.clientService.createSupportRequest({
-      user: req.user._id as string,
-      text: data.text,
-    });
-
-    return [
-      {
-        id: String(chatReq._id),
-        createdAt: chatReq.createdAt.toISOString(),
-        isActive: chatReq.isActive,
-        hasNewMessages: false,
-      },
-    ];
-  }
-
-  @Roles(Role.Client)
-  @Get('client/support-requests')
+  @Roles(Role.Manager)
+  @Get('manager/support-requests')
   async getRequests(
-    @Request() req,
     @Query('isActive') isActive: boolean,
     @Query('limit') limit?: number,
     @Query('offset') offset?: number,
-  ): Promise<Partial<RequestAnswer>[]> {
+  ): Promise<RequestAnswer[]> {
     const allUserRequests = await this.chatService.findSupportRequests({
-      user: req.user._id as string,
+      user: null,
       isActive: isActive,
     });
     if (allUserRequests.length == 0) {
@@ -57,12 +34,18 @@ export class ChatClientController {
     const promises = allUserRequests
       .slice(reqOffset, Number(reqLimit) + Number(reqOffset))
       .map(async (el) => {
-        const unreadCount = await this.clientService.getUnreadCount(el._id);
+        const unreadCount = await this.managerService.getUnreadCount(el._id);
         return {
           id: String(el._id),
           createdAt: el.createdAt.toISOString(),
           isActive: el.isActive,
           hasNewMessages: unreadCount.length > 0,
+          client: {
+            id: String(el.user._id),
+            name: el.user.name,
+            email: el.user.email,
+            contactPhone: el.user.contactPhone,
+          },
         };
       });
 

@@ -3,7 +3,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { User, UserSchema } from 'src/users';
 
-import { ChatClientController, ChatEmpoloyeeController } from './controllers';
+import {
+  ChatClientController,
+  ChatCommonController,
+  ChatEmpoloyeeController,
+} from './controllers';
 import {
   SupportRequestService,
   SupportRequestClientService,
@@ -24,7 +28,11 @@ import {
       { name: User.name, schema: UserSchema },
     ]),
   ],
-  controllers: [ChatClientController, ChatEmpoloyeeController],
+  controllers: [
+    ChatClientController,
+    ChatEmpoloyeeController,
+    ChatCommonController,
+  ],
   providers: [
     SupportRequestService,
     SupportRequestClientService,
