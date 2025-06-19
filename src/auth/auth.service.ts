@@ -48,7 +48,7 @@ export class AuthService {
       id: user._id,
     };
     const id = await this.jwtService.signAsync(payload);
-    response.cookie('id', id);
+    response.cookie('id', id, { httpOnly: false });
   }
 
   logout(response: Response) {
