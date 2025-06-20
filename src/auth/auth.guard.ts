@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { IS_PUBLIC_KEY, NOT_AUTH_KEY, ROLES_KEY } from './roles.decorator';
 import { AuthService } from './auth.service';
-import { cookieExtractor } from './auth.cookies.extractor';
+import { tokenExtractor } from './auth.cookies.extractor';
 import { Role, User } from 'src/users';
 
 @Injectable()
@@ -38,7 +38,8 @@ export class AuthenticateGuard extends AuthGuard('jwt') {
     }
 
     const request: Request = context.switchToHttp().getRequest();
-    const token = cookieExtractor(request);
+
+    const token = tokenExtractor(request);
 
     if (isNotAuth) {
       if (!token) {

@@ -23,13 +23,14 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req, @Res({ passthrough: true }) response: Response) {
-    await this.authService.login(req, response);
+    const token = await this.authService.login(req, response);
     const user = req.user as User;
     const answer = {
       id: user._id,
       email: user.email,
       name: user.name,
       contactPhone: user.contactPhone,
+      token: token,
     };
 
     return answer;

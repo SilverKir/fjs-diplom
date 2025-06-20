@@ -42,13 +42,21 @@ export class AuthService {
     }
   }
 
-  async login(req: Request, response: Response) {
+  async login(req: Request, response: Response): Promise<string> {
     const user = req.user as User;
     const payload = {
       id: user._id,
     };
     const id = await this.jwtService.signAsync(payload);
-    response.cookie('id', id, { httpOnly: false });
+    const separator = process.env.SEPARATOR ?? 5;
+    let token: string | null = null;
+    if (Number(separator) > 0) {
+      const firstPart = id.slice(-Number(separator));
+      token = id.slice(0, -Number(separator));
+      response.cookie('id', firstPart, { httpOnly: false });
+    }
+
+    return token ? token : id;
   }
 
   logout(response: Response) {

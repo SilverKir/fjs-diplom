@@ -7,3 +7,18 @@ export const cookieExtractor = function (req: Request) {
   }
   return token;
 };
+
+export const extractTokenFromHeader = (request: Request): string | null => {
+  const [type, token] = request.headers.authorization?.split(' ') ?? [];
+  return type === 'Bearer' ? token : null;
+};
+
+export const tokenExtractor = (request: Request): string | null => {
+  const first = cookieExtractor(request);
+  const second = extractTokenFromHeader(request);
+
+  if (first && second) {
+    return second.concat(first);
+  }
+  return first ? first : second;
+};
