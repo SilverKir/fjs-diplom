@@ -5,10 +5,11 @@ import {
   Request,
   Res,
   Body,
+  Get,
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { LocalAuthGuard, AuthService, NotAuth } from '.';
+import { LocalAuthGuard, AuthService, NotAuth, Public } from '.';
 
 import { UsersService, CreateUserDto, IUserAnswer, User } from 'src/users';
 
@@ -50,5 +51,11 @@ export class AuthController {
       email: result.email,
       name: result.name,
     };
+  }
+
+  @Public()
+  @Get('nav')
+  async setNav(@Request() req) {
+    return await this.authService.getRole(req);
   }
 }

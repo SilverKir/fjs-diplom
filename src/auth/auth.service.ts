@@ -6,6 +6,7 @@ import { User } from 'src/users/users.model';
 import { JwtService } from '@nestjs/jwt';
 
 import { jwtConstants } from './constants';
+import { tokenExtractor } from './auth.cookies.extractor';
 
 @Injectable()
 export class AuthService {
@@ -61,5 +62,16 @@ export class AuthService {
 
   logout(response: Response) {
     response.clearCookie('id');
+  }
+
+  async getRole(req: Request): Promise<string> {
+    const token = tokenExtractor(req);
+    if (token) {
+      const user = await this.validateByToken(token);
+      if (user) {
+        return user.role;
+      }
+    }
+    return 'unauthorized';
   }
 }
