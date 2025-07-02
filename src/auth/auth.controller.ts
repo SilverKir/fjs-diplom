@@ -12,12 +12,14 @@ import { Response } from 'express';
 import { LocalAuthGuard, AuthService, NotAuth, Public } from '.';
 
 import { UsersService, CreateUserDto, IUserAnswer, User } from 'src/users';
+import { NavService } from 'src/navigate/navigate.service';
 
 @Controller('api')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
+    private navService: NavService,
   ) {}
 
   @NotAuth()
@@ -56,6 +58,7 @@ export class AuthController {
   @Public()
   @Get('nav')
   async setNav(@Request() req) {
-    return await this.authService.getRole(req);
+    const role = await this.authService.getRole(req);
+    return this.navService.getNavigation(role);
   }
 }
