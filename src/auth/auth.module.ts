@@ -10,11 +10,13 @@ import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthenticateGuard } from './auth.guard';
 import { AuthController } from './auth.controller';
+import { NavModule } from 'src/navigate/navigate.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    NavModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1h' },

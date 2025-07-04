@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { INavigation } from './interface/INavigation';
+import { IAuthNav } from './interface/IAuthNav';
 import {
   ADMIN_NAV,
   CLIENT_NAV,
@@ -9,16 +9,28 @@ import {
 
 @Injectable()
 export class NavService {
-  getNavigation(role: string): INavigation[] {
+  getNavigation(role: string): IAuthNav {
     switch (role) {
       case 'admin':
-        return ADMIN_NAV;
+        return {
+          isAuth: true,
+          nav: ADMIN_NAV,
+        };
       case 'client':
-        return CLIENT_NAV;
+        return {
+          isAuth: true,
+          nav: CLIENT_NAV,
+        };
       case 'manager':
-        return MANAGER_NAV;
+        return {
+          isAuth: true,
+          nav: MANAGER_NAV,
+        };
       default:
-        return UNAUTORIZED_NAV;
+        return {
+          isAuth: false,
+          nav: UNAUTORIZED_NAV,
+        };
     }
   }
 }

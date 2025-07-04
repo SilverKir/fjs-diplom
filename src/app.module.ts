@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { HotelsModule } from './hotels/hotels.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { ChatModule } from './chat/chat.module';
+import { NavModule } from './navigate/navigate.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ChatModule } from './chat/chat.module';
     HotelsModule,
     ReservationModule,
     ChatModule,
+    NavModule,
   ],
 })
 export class AppModule {}
