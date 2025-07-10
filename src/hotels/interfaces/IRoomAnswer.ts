@@ -3,7 +3,7 @@ export interface IRoomAnswer {
   id: ObjectId | string;
   description?: string;
   images?: string[];
-  isEnabled: boolean;
+  isEnabled?: boolean;
   hotel: {
     id: ObjectId | string;
     title: string;

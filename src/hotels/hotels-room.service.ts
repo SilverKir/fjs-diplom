@@ -34,7 +34,7 @@ export class HotelsRoomService implements IHotelRoomService {
   }
 
   async search(params: SearchRoomsParams): Promise<HotelRoom[]> {
-    const isEnabled = params.isEnabled ? params.isEnabled : true;
+    const isEnabled = params.isEnabled ? params.isEnabled : false;
     const rooms = await this.RoomModel.find({
       isEnabled: isEnabled,
       hotel: params.hotel,

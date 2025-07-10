@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Request,
   Post,
   Get,
   Query,
@@ -12,7 +13,7 @@ import {
 import { ObjectId } from 'mongoose';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
-import { Roles, Public } from 'src/auth';
+import { Roles, Public, AuthService } from 'src/auth';
 import { Role } from 'src/users';
 
 import { HotelsService } from './hotels.service';
@@ -20,10 +21,12 @@ import { AddHotelDto, AddRoomDto } from './dto';
 import { IHotelAnswer, IRoomAnswer, UpdateHotelParams } from './interfaces';
 import { HotelsRoomService } from './hotels-room.service';
 import { multerOptions } from './config/multer.config';
+import { HotelRoom } from './models';
 
 @Controller('api')
 export class HotelsController {
   constructor(
+    private authService: AuthService,
     private hotelService: HotelsService,
     private roomServise: HotelsRoomService,
   ) {}
@@ -108,6 +111,55 @@ export class HotelsController {
         description: room.hotel.description,
       },
     };
+  }
+
+  @Public()
+  @Get('common/hotel-rooms')
+  async getAllHotelRooms(
+    @Request() req,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+    @Query('hotel') title?: string,
+  ): Promise<Partial<IRoomAnswer[]> | null> {
+    const role = await this.authService.getRole(req);
+    const isEnabled = role === 'unauthorized' || role === 'client';
+    const result = await this.hotelService.search({
+      title: title,
+    });
+
+    if (result) {
+      const rooms: HotelRoom[] = [];
+      for (const obj of result) {
+        const roomResults = await this.roomServise.search({
+          isEnabled: isEnabled,
+          hotel: obj._id,
+        });
+        rooms.push(...roomResults);
+      }
+
+      if (rooms) {
+        const promises = rooms.map(async (room) => {
+          const hotel = await this.hotelService.findById(room.hotel._id);
+          return {
+            id: room._id,
+            description: room.description,
+            images: room.images,
+            hotel: {
+              id: room.hotel._id,
+              title: hotel.title,
+            },
+          };
+        });
+
+        const answer = await Promise.all(promises);
+        const lim = limit ? limit : answer.length;
+        const off = offset ? offset : 0;
+        return answer.slice(off, Number(lim) + Number(off));
+      }
+      return null;
+    }
+
+    return null;
   }
 
   @Public()
