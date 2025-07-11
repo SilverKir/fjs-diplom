@@ -9,6 +9,8 @@ import { Hotel, HotelSchema, HotelRoom, HotelRoomSchema } from './models';
 import { HotelsRoomService } from './hotels-room.service';
 import { multerConfig } from './config/multer.config';
 import { AuthModule } from 'src/auth/auth.module';
+import { ReservationModule } from 'src/reservation/reservation.module';
+import { ReservationService } from 'src/reservation/reservation.service';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { AuthModule } from 'src/auth/auth.module';
     ]),
     MulterModule.register({ dest: multerConfig.dest }),
     AuthModule,
+    ReservationModule,
   ],
   controllers: [HotelsController],
   providers: [HotelsService, HotelsRoomService],

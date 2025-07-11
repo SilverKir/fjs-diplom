@@ -68,6 +68,23 @@ export class ReservationService implements IReservation {
       });
   }
 
+  async getReservationsByDate(
+    filter: Partial<ReservationSearchOptions>,
+  ): Promise<Array<Reservation>> {
+    return await this.reservationModel
+      .find({
+        $and: [
+          { dateStart: { $lte: filter.dateEnd } },
+          { dateEnd: { $gte: filter.dateStart } },
+        ],
+      })
+      .select('-__v')
+      .exec()
+      .catch(() => {
+        throw new BadRequestException('Wrong request');
+      });
+  }
+
   async findReservationById(id: ObjectId | string): Promise<Reservation> {
     const result = await this.reservationModel
       .findById(id)

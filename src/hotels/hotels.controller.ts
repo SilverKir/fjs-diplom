@@ -18,17 +18,24 @@ import { Role } from 'src/users';
 
 import { HotelsService } from './hotels.service';
 import { AddHotelDto, AddRoomDto } from './dto';
-import { IHotelAnswer, IRoomAnswer, UpdateHotelParams } from './interfaces';
+import {
+  IGetReservedRooms,
+  IHotelAnswer,
+  IRoomAnswer,
+  UpdateHotelParams,
+} from './interfaces';
 import { HotelsRoomService } from './hotels-room.service';
 import { multerOptions } from './config/multer.config';
 import { HotelRoom } from './models';
+import { ReservationService } from 'src/reservation/reservation.service';
 
 @Controller('api')
 export class HotelsController {
   constructor(
     private authService: AuthService,
     private hotelService: HotelsService,
-    private roomServise: HotelsRoomService,
+    private roomService: HotelsRoomService,
+    private reservationService: ReservationService,
   ) {}
 
   @Roles(Role.Admin)
@@ -95,7 +102,7 @@ export class HotelsController {
         return file.filename;
       });
     }
-    const room = await this.roomServise.create({
+    const room = await this.roomService.create({
       hotel: hotel,
       description: createRoom.description,
       images: dowloadImages,
@@ -117,6 +124,7 @@ export class HotelsController {
   @Get('common/hotel-rooms')
   async getAllHotelRooms(
     @Request() req,
+    @Body() data: IGetReservedRooms,
     @Query('limit') limit?: number,
     @Query('offset') offset?: number,
     @Query('hotel') title?: string,
@@ -130,7 +138,7 @@ export class HotelsController {
     if (result) {
       const rooms: HotelRoom[] = [];
       for (const obj of result) {
-        const roomResults = await this.roomServise.search({
+        const roomResults = await this.roomService.search({
           isEnabled: isEnabled,
           hotel: obj._id,
         });
@@ -151,14 +159,32 @@ export class HotelsController {
           };
         });
 
+        let reservedRoomsId: (string | ObjectId)[] = [];
+        if (data) {
+          const reserved =
+            await this.reservationService.getReservationsByDate(data);
+          if (reserved) {
+            reservedRoomsId = reserved.map((room) => {
+              return room.roomId._id;
+            });
+          }
+        }
         const answer = await Promise.all(promises);
         const lim = limit ? limit : answer.length;
         const off = offset ? offset : 0;
+        if (reservedRoomsId.length > 0) {
+          const arr = answer.filter((el) => {
+            return reservedRoomsId.some((res) => {
+              return String(res) !== String(el.id);
+            });
+          });
+          return arr.slice(off, Number(lim) + Number(off));
+        }
+
         return answer.slice(off, Number(lim) + Number(off));
       }
       return null;
     }
-
     return null;
   }
 
@@ -167,7 +193,7 @@ export class HotelsController {
   async getRoom(
     @Param('id') id: string | ObjectId,
   ): Promise<Partial<IRoomAnswer>> {
-    const room = await this.roomServise.findById(id);
+    const room = await this.roomService.findById(id);
     const hotel = await this.hotelService.findById(room.hotel._id);
     return {
       id: room._id,
@@ -190,7 +216,7 @@ export class HotelsController {
     @UploadedFiles()
     files?: Array<Express.Multer.File>,
   ): Promise<Partial<IRoomAnswer>> {
-    const room = await this.roomServise.findById(id);
+    const room = await this.roomService.findById(id);
     const hotel = await this.hotelService.findById(createRoom.hotelId);
     const initialImages = room.images;
     let savedImages: string[] | undefined = [];
@@ -200,14 +226,14 @@ export class HotelsController {
       savedImages = createRoom.images;
     }
 
-    this.roomServise.updateFiles(initialImages, savedImages);
+    this.roomService.updateFiles(initialImages, savedImages);
     let dowloadImages: string[] = [];
     if (files) {
       dowloadImages = files.map((file) => {
         return file.filename;
       });
     }
-    const updatedRoom = await this.roomServise.update(id, {
+    const updatedRoom = await this.roomService.update(id, {
       hotel: hotel,
       description: createRoom.description,
       images: savedImages ? savedImages.concat(dowloadImages) : dowloadImages,

@@ -5,3 +5,4 @@ export { UpdateHotelParams } from './UpdateHotelParams';
 export { SearchHotelParams } from './SearchHotelParams';
 export { IHotelAnswer } from './IHotelAnswer';
 export { IRoomAnswer } from './IRoomAnswer';
+export { IGetReservedRooms } from './IGetReservedRooms';
