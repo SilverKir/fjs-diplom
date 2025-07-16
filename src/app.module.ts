@@ -7,6 +7,8 @@ import { HotelsModule } from './hotels/hotels.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { ChatModule } from './chat/chat.module';
 import { NavModule } from './navigate/navigate.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -20,6 +22,10 @@ import { NavModule } from './navigate/navigate.module';
     ReservationModule,
     ChatModule,
     NavModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../uploads/', 'images'),
+      serveRoot: '/api/images',
+    }),
   ],
 })
 export class AppModule {}

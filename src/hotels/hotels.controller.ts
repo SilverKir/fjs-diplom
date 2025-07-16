@@ -18,12 +18,7 @@ import { Role } from 'src/users';
 
 import { HotelsService } from './hotels.service';
 import { AddHotelDto, AddRoomDto } from './dto';
-import {
-  IGetReservedRooms,
-  IHotelAnswer,
-  IRoomAnswer,
-  UpdateHotelParams,
-} from './interfaces';
+import { IHotelAnswer, IRoomAnswer, UpdateHotelParams } from './interfaces';
 import { HotelsRoomService } from './hotels-room.service';
 import { multerOptions } from './config/multer.config';
 import { HotelRoom } from './models';
@@ -124,7 +119,8 @@ export class HotelsController {
   @Get('common/hotel-rooms')
   async getAllHotelRooms(
     @Request() req,
-    @Body() data: IGetReservedRooms,
+    @Query('dateStart') dateStart: string,
+    @Query('dateEnd') dateEnd: string,
     @Query('limit') limit?: number,
     @Query('offset') offset?: number,
     @Query('hotel') title?: string,
@@ -160,9 +156,11 @@ export class HotelsController {
         });
 
         let reservedRoomsId: (string | ObjectId)[] = [];
-        if (data) {
-          const reserved =
-            await this.reservationService.getReservationsByDate(data);
+        if (dateStart && dateEnd) {
+          const reserved = await this.reservationService.getReservationsByDate({
+            dateStart: new Date(dateStart),
+            dateEnd: new Date(dateEnd),
+          });
           if (reserved) {
             reservedRoomsId = reserved.map((room) => {
               return room.roomId._id;
