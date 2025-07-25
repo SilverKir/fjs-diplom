@@ -34,13 +34,12 @@ export class HotelsRoomService implements IHotelRoomService {
   }
 
   async search(params: SearchRoomsParams): Promise<HotelRoom[]> {
-    const isEnabled = params.isEnabled ? params.isEnabled : false;
-    const rooms = await this.RoomModel.find({
-      isEnabled: isEnabled,
-      hotel: params.hotel,
-    })
-      .select('-__v')
-      .exec();
+    const roomParams = params.isEnabled
+      ? { isEnabled: true, hotel: params.hotel }
+      : {
+          hotel: params.hotel,
+        };
+    const rooms = await this.RoomModel.find(roomParams).select('-__v').exec();
     const limit = params.limit ? params.limit : rooms.length;
     const offset = params.offset ? params.offset : 0;
     return rooms.slice(offset, Number(limit) + Number(offset));
