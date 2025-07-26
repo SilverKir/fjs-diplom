@@ -14,21 +14,25 @@ export class NavService {
       case 'admin':
         return {
           isAuth: true,
+          role: role,
           nav: ADMIN_NAV,
         };
       case 'client':
         return {
           isAuth: true,
+          role: role,
           nav: CLIENT_NAV,
         };
       case 'manager':
         return {
           isAuth: true,
+          role: role,
           nav: MANAGER_NAV,
         };
       default:
         return {
           isAuth: false,
+          role: 'unautorized',
           nav: UNAUTORIZED_NAV,
         };
     }
