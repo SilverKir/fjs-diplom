@@ -8,7 +8,7 @@ export const UNAUTORIZED_NAV: INavigation[] = [
 
 export const CLIENT_NAV: INavigation[] = [
   { id: 1, name: 'Поиск номеров', link: '/hotel-rooms' },
-  { id: 2, name: 'Бронирование номера', link: '/client/reservations' },
+  { id: 2, name: 'Брони', link: '/client/reservations' },
   { id: 3, name: 'Обращения в поддержку', link: '/client/support-requests' },
 ];
 
