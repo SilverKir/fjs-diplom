@@ -29,8 +29,8 @@ export class ReservationController {
     const userId = req.user._id as string;
     const reservation = await this.reservationService.addReservation({
       userId: userId,
-      hotelId: hotel._id,
-      roomId: room._id,
+      hotelId: hotel,
+      roomId: room,
       dateStart: new Date(data.startDate),
       dateEnd: new Date(data.endDate),
     });
@@ -38,12 +38,12 @@ export class ReservationController {
       startDate: reservation.dateStart.toISOString(),
       endDate: reservation.dateEnd.toISOString(),
       hotelRoom: {
-        description: room.description,
-        images: room.images,
+        description: reservation.roomId.description,
+        images: reservation.roomId.images,
       },
       hotel: {
-        title: hotel.title,
-        description: hotel.description,
+        title: reservation.hotelId.title,
+        description: reservation.hotelId.description,
       },
     };
   }
@@ -58,20 +58,28 @@ export class ReservationController {
       dateEnd: new Date(8640000000000000),
     });
     if (reservations.length > 0) {
-      return reservations.map((obj) => {
-        return {
-          startDate: obj.dateStart.toISOString(),
-          endDate: obj.dateEnd.toISOString(),
-          hotelRoom: {
-            description: obj.roomId.description,
-            images: obj.roomId.images,
-          },
-          hotel: {
-            title: obj.hotelId.title,
-            description: obj.hotelId.description,
-          },
-        };
-      });
+      return await Promise.all(
+        reservations.map(async (obj) => {
+          const room = await this.reservationService.findRoomById(
+            obj.roomId._id.toString(),
+          );
+          const hotel = await this.reservationService.findHotelById(
+            room.hotel._id,
+          );
+          return {
+            startDate: obj.dateStart.toISOString(),
+            endDate: obj.dateEnd.toISOString(),
+            hotelRoom: {
+              description: room.description,
+              images: room.images,
+            },
+            hotel: {
+              title: hotel.title,
+              description: hotel.description,
+            },
+          };
+        }),
+      );
     }
     return [];
   }

@@ -172,8 +172,8 @@ export class HotelsController {
         const off = offset ? offset : 0;
         if (reservedRoomsId.length > 0) {
           const arr = answer.filter((el) => {
-            return reservedRoomsId.some((res) => {
-              return String(res) !== String(el.id);
+            return !reservedRoomsId.some((res) => {
+              return res.toString() === el.id.toString();
             });
           });
           return arr.slice(off, Number(lim) + Number(off));
