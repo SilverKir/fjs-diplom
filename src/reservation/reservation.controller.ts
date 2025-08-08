@@ -67,6 +67,7 @@ export class ReservationController {
             room.hotel._id,
           );
           return {
+            id: obj._id,
             startDate: obj.dateStart.toISOString(),
             endDate: obj.dateEnd.toISOString(),
             hotelRoom: {
