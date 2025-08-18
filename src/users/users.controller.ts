@@ -52,34 +52,4 @@ export class UsersController {
         })
       : null;
   }
-
-  //   @Roles(Role.Manager)
-  //   @Get('manager/users')
-  //   async getUsersByManager(
-  //     @Query('limit') limit?: number,
-  //     @Query('offset') offset?: number,
-  //     @Query('name') name?: string,
-  //     @Query('email') email?: string,
-  //     @Query('contactPhone') contactPhone?: string,
-  //   ): Promise<IUserAnswer[] | null> {
-  //     const query: ISearchUserParams = {
-  //       limit: limit ? limit : 0,
-  //       offset: offset ? offset : 0,
-  //       email: email ? email : '',
-  //       name: name ? name : '',
-  //       contactPhone: contactPhone ? contactPhone : '',
-  //     };
-  //     const users = await this.usersService.findAll(query);
-
-  //     return users
-  //       ? users.map((obj) => {
-  //           return {
-  //             id: obj._id,
-  //             email: obj.email,
-  //             name: obj.name,
-  //             contactPhone: obj.contactPhone,
-  //           };
-  //         })
-  //       : null;
-  //   }
 }
