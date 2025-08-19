@@ -30,11 +30,18 @@ export class UsersService implements IUserService {
     return await this.UserModel.findOne({ email: email }).select('-__v').exec();
   }
 
+  escapeRegExp = (string: string): string => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  };
+
   async findAll(params: ISearchUserParams): Promise<User[] | null> {
     const users = await this.UserModel.find({
-      name: { $regex: params.name, $options: 'i' },
-      email: { $regex: params.email, $options: 'i' },
-      contactPhone: { $regex: params.contactPhone, $options: 'i' },
+      name: { $regex: this.escapeRegExp(params.name), $options: 'i' },
+      email: { $regex: this.escapeRegExp(params.email), $options: 'i' },
+      contactPhone: {
+        $regex: this.escapeRegExp(params.contactPhone),
+        $options: 'i',
+      },
     })
       .select('-__v')
       .exec();
