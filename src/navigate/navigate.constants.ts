@@ -20,5 +20,7 @@ export const MANAGER_NAV: INavigation[] = [
 
 export const ADMIN_NAV: INavigation[] = [
   { id: 1, name: 'Гостиницы', link: '/admin/hotels' },
-  { id: 2, name: 'Cписок пользователей', link: '/admin/users' },
+  { id: 2, name: 'Добавить гостиницу', link: '/admin/hotel' },
+  { id: 3, name: 'Cписок пользователей', link: '/admin/users' },
+  { id: 4, name: 'Добавить пользователя', link: '/admin/new_user' },
 ];

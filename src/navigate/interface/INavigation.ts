@@ -1,5 +1,5 @@
 export interface INavigation {
   id: number;
   name: string;
-  link?: string;
+  link?: string | INavigation[];
 }
