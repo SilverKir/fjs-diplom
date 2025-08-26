@@ -13,9 +13,8 @@ export const CLIENT_NAV: INavigation[] = [
 ];
 
 export const MANAGER_NAV: INavigation[] = [
-  { id: 1, name: 'Поиск номеров', link: '/hotel-rooms' },
-  { id: 2, name: 'Cписок пользователей', link: '/manager/users' },
-  { id: 3, name: 'Обращения в поддержку', link: '/manager/support-requests' },
+  { id: 1, name: 'Cписок пользователей', link: '/manager/users' },
+  { id: 2, name: 'Обращения в поддержку', link: '/manager/support-requests' },
 ];
 
 export const ADMIN_NAV: INavigation[] = [

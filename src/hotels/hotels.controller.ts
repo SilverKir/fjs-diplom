@@ -68,6 +68,33 @@ export class HotelsController {
   }
 
   @Roles(Role.Admin)
+  @Get('admin/hotel-rooms/:id')
+  async getHotelRooms(
+    @Param('id') id: string | ObjectId,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+  ): Promise<Partial<IRoomAnswer[]> | null> {
+    const result = await this.roomService.search({
+      hotel: id,
+      limit: limit,
+      offset: offset,
+    });
+    return result
+      ? result.map((obj) => {
+          return {
+            id: obj._id,
+            description: obj.description,
+            images: obj.images,
+            isEnabled: obj.isEnabled,
+            hotel: { id: obj.hotel._id, title: obj.hotel.title },
+          };
+        })
+      : null;
+  }
+
+
+
+  @Roles(Role.Admin)
   @Put('admin/hotels/:id')
   async updateHotel(
     @Param('id') id: string | ObjectId,
