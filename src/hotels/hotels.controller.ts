@@ -92,8 +92,6 @@ export class HotelsController {
       : null;
   }
 
-
-
   @Roles(Role.Admin)
   @Put('admin/hotels/:id')
   async updateHotel(

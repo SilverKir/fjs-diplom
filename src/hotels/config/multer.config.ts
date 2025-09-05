@@ -48,7 +48,6 @@ export const multerOptions = {
       const uploadPath = multerConfig.dest;
       // Create folder if doesn't exist
       if (!existsSync(uploadPath)) {
-        console.log(uploadPath);
         mkdirSync(uploadPath, { recursive: true });
       }
 
