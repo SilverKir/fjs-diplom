@@ -39,10 +39,13 @@ export class HotelsRoomService implements IHotelRoomService {
       : {
           hotel: params.hotel,
         };
-    const rooms = await this.RoomModel.find(roomParams).select('-__v').exec();
-    const limit = params.limit ? params.limit : rooms.length;
+    const limit = params.limit ? params.limit : Infinity;
     const offset = params.offset ? params.offset : 0;
-    return rooms.slice(offset, Number(limit) + Number(offset));
+    return await this.RoomModel.find(roomParams)
+      .skip(offset)
+      .limit(limit)
+      .select('-__v')
+      .exec();
   }
 
   async update(

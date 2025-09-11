@@ -19,6 +19,8 @@ import {
   SupportRequest,
   SupportRequestSchema,
 } from './models';
+import { ChatGateway } from './chat.gateway';
+import { ChatService } from './services/chatGateway.service';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import {
     SupportRequestService,
     SupportRequestClientService,
     SupportRequestEmployeeService,
+    ChatGateway,
+    ChatService,
   ],
 })
 export class ChatModule {}

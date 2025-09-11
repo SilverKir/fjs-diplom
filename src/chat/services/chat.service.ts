@@ -17,9 +17,11 @@ import {
   SupportRequestDocument,
   MessageDocument,
 } from '../models';
+import EventEmitter from 'node:events';
 
 @Injectable()
 export class SupportRequestService implements ISupportRequestService {
+  public chatEmmitter: EventEmitter;
   constructor(
     @InjectModel(SupportRequest.name)
     private requestModel: Model<SupportRequestDocument>,
@@ -78,7 +80,10 @@ export class SupportRequestService implements ISupportRequestService {
   subscribe(
     handler: (supportRequest: SupportRequest, message: Message) => void,
   ): () => void {
-    throw new Error('Method not implemented.');
+    this.chatEmmitter.on('newMessage', ({ supportRequest, message }) => {
+      handler(supportRequest, message);
+    });
+    return;
   }
 
   async validate(

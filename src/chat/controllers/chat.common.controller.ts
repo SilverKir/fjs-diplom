@@ -68,7 +68,7 @@ export class ChatCommonController {
   }
 
   @Roles(Role.Manager, Role.Client)
-  @Post('id/messages/read')
+  @Post(':id/messages/read')
   async readMessages(
     @Request() req,
     @Param('id') id: string,
