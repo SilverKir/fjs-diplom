@@ -10,7 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SupportRequestService, ChatService } from './services';
-import { IUser, IUserAnswer } from 'src/users/interfaces';
+import { IUserAnswer } from 'src/users/interfaces';
 import { Message, SupportRequest } from './models';
 
 @WebSocketGateway({
@@ -59,7 +59,8 @@ export class ChatGateway
     const { user } = client.request as unknown as Request & {
       user: IUserAnswer;
     };
-    await this.supportRequestService.validate(chatId, user.id, user.role);
+    if (user.role)
+      await this.supportRequestService.validate(chatId, user.id, user.role);
     this.supportRequestService.subscribe(
       (supportRequest: SupportRequest, message: Message) => {
         if (String(supportRequest) === chatId) {

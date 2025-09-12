@@ -21,7 +21,7 @@ import EventEmitter from 'node:events';
 
 @Injectable()
 export class SupportRequestService implements ISupportRequestService {
-  public chatEmmitter: EventEmitter;
+  public chatEmitter: EventEmitter;
   constructor(
     @InjectModel(SupportRequest.name)
     private requestModel: Model<SupportRequestDocument>,
@@ -80,10 +80,11 @@ export class SupportRequestService implements ISupportRequestService {
   subscribe(
     handler: (supportRequest: SupportRequest, message: Message) => void,
   ): () => void {
-    this.chatEmmitter.on('newMessage', ({ supportRequest, message }) => {
-      handler(supportRequest, message);
-    });
-    return;
+    return () => {
+      this.chatEmitter.on('newMessage', ({ supportRequest, message }) => {
+        handler(supportRequest, message);
+      });
+    };
   }
 
   async validate(
