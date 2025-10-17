@@ -17,6 +17,7 @@ export const CLIENT_NAV: INavigation[] = [
     action: true,
   },
   { id: 4, name: 'Комнаты', link: '/hotel-room/:id', action: false },
+  { id: 5, name: 'Чаты', link: '/common/support-requests/:id', action: false },
 ];
 
 export const MANAGER_NAV: INavigation[] = [
@@ -33,6 +34,7 @@ export const MANAGER_NAV: INavigation[] = [
     link: '/manager/reservations/:id',
     action: false,
   },
+  { id: 4, name: 'Чаты', link: '/common/support-requests/:id', action: false },
 ];
 
 export const ADMIN_NAV: INavigation[] = [
