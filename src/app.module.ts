@@ -9,6 +9,7 @@ import { ChatModule } from './chat/chat.module';
 import { NavModule } from './navigate/navigate.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { join } from 'path';
     MongooseModule.forRoot(
       process.env.DATABASE_URL ?? 'mongodb://localhost:27017/hotel_reservaton',
     ),
+    EventEmitterModule.forRoot(),
     AuthModule,
     HotelsModule,
     ReservationModule,

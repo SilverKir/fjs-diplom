@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import { User, UserSchema } from 'src/users';
 
 import {
@@ -20,7 +19,6 @@ import {
   SupportRequestSchema,
 } from './models';
 import { ChatGateway } from './chat.gateway';
-import { ChatService } from './services/chatGateway.service';
 
 @Module({
   imports: [
@@ -40,7 +38,6 @@ import { ChatService } from './services/chatGateway.service';
     SupportRequestClientService,
     SupportRequestEmployeeService,
     ChatGateway,
-    ChatService,
   ],
 })
 export class ChatModule {}

@@ -3,6 +3,7 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { ObjectId, Model, Connection } from 'mongoose';
 
@@ -17,17 +18,16 @@ import {
   SupportRequestDocument,
   MessageDocument,
 } from '../models';
-import EventEmitter from 'node:events';
 
 @Injectable()
 export class SupportRequestService implements ISupportRequestService {
-  public chatEmitter: EventEmitter;
   constructor(
     @InjectModel(SupportRequest.name)
     private requestModel: Model<SupportRequestDocument>,
     @InjectModel(Message.name)
     private messageModel: Model<MessageDocument>,
     @InjectConnection() private connection: Connection,
+    private chatEmitter: EventEmitter2,
   ) {}
 
   async findSupportRequests(
@@ -54,16 +54,17 @@ export class SupportRequestService implements ISupportRequestService {
       sentAt: new Date(),
       text: data.text,
     });
-    const newMessage = await message.save();
     const request = await this.requestModel
       .findById(data.supportRequest)
       .catch(() => {
         throw new BadRequestException('Wrong RequestId');
       });
+    const newMessage = await message.save();
     if (request) {
       request.messages.push(newMessage);
       await request.save();
     }
+
     return newMessage;
   }
 

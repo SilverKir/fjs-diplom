@@ -9,6 +9,7 @@ import { Roles } from 'src/auth';
 import { Role } from 'src/users';
 import { MessageAnswer, SendMessageDto } from '../interfaces';
 import { ChatDto, ReadDto } from '../dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('api/common/support-requests')
 export class ChatCommonController {
@@ -16,6 +17,7 @@ export class ChatCommonController {
     private managerService: SupportRequestEmployeeService,
     private chatService: SupportRequestService,
     private clientServise: SupportRequestClientService,
+    private chatEmitter: EventEmitter2,
   ) {}
 
   @Roles(Role.Manager, Role.Client)
@@ -52,19 +54,22 @@ export class ChatCommonController {
       text: data.text,
     };
     const result = await this.chatService.sendMessage(messageData);
-
-    return [
-      {
-        id: String(result._id),
-        createdAt: result.createdAt.toISOString(),
-        text: result.text,
-        readAt: result.readAt ? result.readAt.toISOString() : '',
-        author: {
-          id: String(result.author._id),
-          name: req.user.name as string,
-        },
+    const answer = {
+      id: String(result._id),
+      createdAt: result.createdAt.toISOString(),
+      text: result.text,
+      readAt: result.readAt ? result.readAt.toISOString() : '',
+      author: {
+        id: String(result.author._id),
+        name: req.user.name as string,
       },
-    ];
+    };
+
+    this.chatEmitter.emit('newMessage', {
+      supportRequest: id,
+      message: answer,
+    });
+    return [{ ...answer }];
   }
 
   @Roles(Role.Manager, Role.Client)
