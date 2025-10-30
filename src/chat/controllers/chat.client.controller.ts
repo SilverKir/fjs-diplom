@@ -32,7 +32,7 @@ export class ChatClientController {
         id: String(chatReq._id),
         createdAt: chatReq.createdAt.toISOString(),
         isActive: chatReq.isActive,
-        hasNewMessages: false,
+        hasNewMessages: true,
       },
     ];
   }
