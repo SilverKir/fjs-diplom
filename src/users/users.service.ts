@@ -48,4 +48,9 @@ export class UsersService implements IUserService {
     const limit = params.limit ? params.limit : users.length;
     return users.slice(params.offset, Number(limit) + Number(params.offset));
   }
+
+  async isUser(): Promise<boolean> {
+    const result = await this.UserModel.exists({});
+    return !!result;
+  }
 }

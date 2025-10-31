@@ -10,6 +10,7 @@ import { NavModule } from './navigate/navigate.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AdminSeederService } from './admin-seeder.service';
 
 @Module({
   imports: [
@@ -29,5 +30,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       serveRoot: '/api/images',
     }),
   ],
+  providers: [AdminSeederService],
 })
 export class AppModule {}
