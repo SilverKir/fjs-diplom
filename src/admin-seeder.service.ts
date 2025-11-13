@@ -19,6 +19,10 @@ export class AdminSeederService implements OnApplicationBootstrap {
       return;
     }
 
+    if (adminPassword.length < 6) {
+      console.warn('Пароль меньше 6 символов. Пропуск инициализации.');
+      return;
+    }
     const adminExists = await this.userService.isUser();
 
     if (!adminExists) {

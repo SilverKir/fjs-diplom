@@ -33,6 +33,11 @@ export class HotelsController {
     private reservationService: ReservationService,
   ) {}
 
+  /**
+   * создание администратором нового отеля
+   * @param createHotel - объект содержащий название отеля и его описание
+   * @returns - объект содержащий новый отель
+   */
   @Roles(Role.Admin)
   @Post('admin/hotels')
   async createHotel(
@@ -46,6 +51,12 @@ export class HotelsController {
     };
   }
 
+  /**
+   * Запрос списка гостиниц администратором
+   * @param limit - количество гостиниц для отображения
+   * @param offset - с какой по счёту гостиницы необходимо выдать список
+   * @returns  - список всех отелей
+   */
   @Roles(Role.Admin)
   @Get('admin/hotels')
   async getAllHotels(
@@ -67,6 +78,13 @@ export class HotelsController {
       : null;
   }
 
+  /**
+   * запрос администратором списка комнат в определенном отеле
+   * @param id - ID отеля
+   * @param limit - количество комнат для отображения на странице
+   * @param offset - с какой комнаты начинать отображение
+   * @returns  список комнат в отеле
+   */
   @Roles(Role.Admin)
   @Get('admin/hotel-rooms/:id')
   async getHotelRooms(
@@ -92,6 +110,12 @@ export class HotelsController {
       : null;
   }
 
+  /**
+   * обновление администратором информации об отеле
+   * @param id  -ID отеля
+   * @param hotelToUpdate -новые данные отеля
+   * @returns - обновленные данные отеля
+   */
   @Roles(Role.Admin)
   @Put('admin/hotels/:id')
   async updateHotel(
@@ -106,6 +130,12 @@ export class HotelsController {
     };
   }
 
+  /**
+   * создание администратором новой комнаты для отеля
+   * @param createRoom - данные комнаты
+   * @param files  - фотографии комнаты
+   * @returns -данные новой комнаты
+   */
   @Roles(Role.Admin)
   @Post('admin/hotel-rooms')
   @UseInterceptors(FilesInterceptor('images', 10, multerOptions))
@@ -115,7 +145,6 @@ export class HotelsController {
     files?: Array<Express.Multer.File>,
   ): Promise<Partial<IRoomAnswer>> {
     const hotel = await this.hotelService.findById(createRoom.hotelId);
-
     let dowloadImages: string[] = [];
     if (files) {
       dowloadImages = files.map((file) => {
@@ -140,6 +169,16 @@ export class HotelsController {
     };
   }
 
+  /**
+   * запрос информации любым пользователем о наличии свободных комнат
+   * @param req -информация о инициаторе запроса
+   * @param dateStart - планируемая дата заезда
+   * @param dateEnd - планируемая дата выезда
+   * @param limit - количество комнат для отображения на странице
+   * @param offset - с какой комнаты начать отображение
+   * @param title - поиск по названию отеля
+   * @returns - список доступных комнат для бронирования
+   */
   @Public()
   @Get('common/hotel-rooms')
   async getAllHotelRooms(
@@ -211,6 +250,11 @@ export class HotelsController {
     return null;
   }
 
+  /**
+   *запрос информации любым пользователем об определенной комнате
+   * @param id -ID комнаты
+   * @returns - информация о комнате
+   */
   @Public()
   @Get('common/hotel-rooms/:id')
   async getRoom(
@@ -230,6 +274,13 @@ export class HotelsController {
     };
   }
 
+  /**
+   * редактирование администратором комнаты
+   * @param id - ID комнаты
+   * @param createRoom - данные комнаты
+   * @param files - фотографии комнаты
+   * @returns - новые данные комнаты
+   */
   @Roles(Role.Admin)
   @Put('admin/hotel-rooms/:id')
   @UseInterceptors(FilesInterceptor('images', 10, multerOptions))
