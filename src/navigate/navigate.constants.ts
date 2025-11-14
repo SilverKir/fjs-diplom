@@ -1,5 +1,12 @@
 import { INavigation } from './interface/INavigation';
-
+/**
+ * навигация в зависимости от типа регистрации
+ * id - порядковый номер навигации
+ * name - как отображается навигация
+ * link - ссылка на API сервера
+ * action - отображение навигации
+ * если не занести данные о навигации. то возможность
+ */
 export const UNAUTORIZED_NAV: INavigation[] = [
   { id: 1, name: 'Войти', link: '/login', action: true },
   { id: 2, name: 'Зарегистрироваться', link: '/register', action: true },

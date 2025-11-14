@@ -18,6 +18,12 @@ import { IReservationAnswer } from './interfaces';
 export class ReservationController {
   constructor(private reservationService: ReservationService) {}
 
+  /**
+   * резервирование клиентом комнаты
+   * @param req
+   * @param data
+   * @returns  параметры зарезервированной комнаты
+   */
   @Roles(Role.Client)
   @Post('client/reservations')
   async reserveRoom(
@@ -48,6 +54,11 @@ export class ReservationController {
     };
   }
 
+  /**
+   * получение клиентом списка зарегистрированных комнат
+   * @param req
+   * @returns список зарегистрированиих комнат
+   */
   @Roles(Role.Client)
   @Get('client/reservations')
   async getReservations(@Request() req): Promise<IReservationAnswer[]> {
@@ -85,6 +96,11 @@ export class ReservationController {
     return [];
   }
 
+  /**
+   * удаление клиентом ранее рарезервированной комнаты
+   * @param req
+   * @param id
+   */
   @Roles(Role.Client)
   @Delete('client/reservations/:id')
   async deleteReservation(
@@ -99,6 +115,11 @@ export class ReservationController {
     await this.reservationService.removeReservation(id);
   }
 
+  /**
+   * получение менеджером списка комнат, зарезервированных пользователем
+   * @param userId
+   * @returns
+   */
   @Roles(Role.Manager)
   @Get('manager/reservations/:userId')
   async getUserReservations(
@@ -137,6 +158,10 @@ export class ReservationController {
     return [];
   }
 
+  /**
+   * удаление менеджером зарезервированных клиентом комнат
+   * @param id - ID зарезервированной комнаты
+   */
   @Roles(Role.Manager)
   @Delete('manager/reservations/:id')
   async deleteUserReservation(@Param('id') id: string): Promise<void> {

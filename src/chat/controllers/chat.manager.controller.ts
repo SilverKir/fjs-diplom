@@ -15,6 +15,13 @@ export class ChatEmpoloyeeController {
     private chatService: SupportRequestService,
   ) {}
 
+  /**
+   * запрос менеджером списка чатов
+   * @param isActive
+   * @param limit
+   * @param offset
+   * @returns
+   */
   @Roles(Role.Manager)
   @Get('manager/support-requests')
   async getRequests(

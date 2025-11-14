@@ -20,6 +20,12 @@ export class ChatCommonController {
     private chatEmitter: EventEmitter2,
   ) {}
 
+  /**
+   * получение менеджером и клиентом списка сообщений в чате
+   * @param req
+   * @param id
+   * @returns
+   */
   @Roles(Role.Manager, Role.Client)
   @Get(':id/messages')
   async getMessagesHistory(
@@ -40,6 +46,13 @@ export class ChatCommonController {
     return Promise.all(promises);
   }
 
+  /**
+   * отправка клиентом и менеджером сообщений в чат
+   * @param req
+   * @param id
+   * @param data
+   * @returns
+   */
   @Roles(Role.Manager, Role.Client)
   @Post(':id/messages')
   async postMessage(
@@ -72,6 +85,13 @@ export class ChatCommonController {
     return [{ ...answer }];
   }
 
+  /**
+   * отметка сообщений прочитанным менеджером и клиентом
+   * @param req
+   * @param id
+   * @param data
+   * @returns
+   */
   @Roles(Role.Manager, Role.Client)
   @Post(':id/messages/read')
   async readMessages(

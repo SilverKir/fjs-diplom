@@ -10,6 +10,11 @@ import { Role } from './users.roles.enum';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  /**
+   *  создание администратором нового пользователя
+   * @param createUser
+   * @returns
+   */
   @Roles(Role.Admin)
   @Post('admin/users')
   async create(@Body() createUser: AdminCreateUserDto): Promise<IUserAnswer> {
@@ -23,6 +28,15 @@ export class UsersController {
     };
   }
 
+  /**
+   * получение администратором и менеджером списка зарегистрированных клиентов
+   * @param limit - количество отображаемых клиентов на одной странице
+   * @param offset - с какого клиента начинать отображение
+   * @param name - поиск по имени
+   * @param email - поиск по email
+   * @param contactPhone - поиск по телефону
+   * @returns список клиенов, соответстующих критериям отбора
+   */
   @Roles(Role.Admin, Role.Manager)
   @Get(['admin/users', 'manager/users'])
   async getUsers(

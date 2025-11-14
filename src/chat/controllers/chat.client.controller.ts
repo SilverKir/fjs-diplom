@@ -16,6 +16,12 @@ export class ChatClientController {
     private chatService: SupportRequestService,
   ) {}
 
+  /**
+   * создание пользователем нового запроса в техподдержку
+   * @param req
+   * @param data
+   * @returns
+   */
   @Roles(Role.Client)
   @Post('client/support-requests')
   async createRequest(
@@ -37,6 +43,14 @@ export class ChatClientController {
     ];
   }
 
+  /**
+   * запрос пользователем списка чатов с техподдержкой
+   * @param req
+   * @param isActive
+   * @param limit
+   * @param offset
+   * @returns
+   */
   @Roles(Role.Client)
   @Get('client/support-requests')
   async getRequests(

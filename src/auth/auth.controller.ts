@@ -22,6 +22,12 @@ export class AuthController {
     private navService: NavService,
   ) {}
 
+  /**
+   * авторизация пользователя
+   * @param req -данные пользоватля
+   * @param response
+   * @returns - информация о пользователе
+   */
   @NotAuth()
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -39,11 +45,21 @@ export class AuthController {
     return answer;
   }
 
+  /**
+   * выход зарегистрированного пользователя
+   * @param req
+   * @param res
+   */
   @Post('auth/logout')
   logout(@Request() req, @Res({ passthrough: true }) res: Response) {
     this.authService.logout(res);
   }
 
+  /**
+   * регистрация пользователя
+   * @param createUser - параметры пользователя
+   * @returns -параметры зарегистрированного пользователя
+   */
   @NotAuth()
   @Post('client/register')
   async create(@Body() createUser: CreateUserDto): Promise<IUserAnswer> {
@@ -55,6 +71,11 @@ export class AuthController {
     };
   }
 
+  /**
+   * запрос навигации
+   * @param req
+   * @returns
+   */
   @Public()
   @Get('nav')
   async setNav(@Request() req) {
