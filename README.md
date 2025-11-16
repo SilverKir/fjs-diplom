@@ -62,3 +62,5 @@ ADMIN_PASSWORD= пароль администратора не менее 6 си
 - отправка клиентом и менеджером сообщений в чат;
 - отметка сообщений прочитанным менеджером и клиентом;
 - запрос менеджером списка чатов;
+
+docker run --name mynode --rm -v %cd%\uploads\images:/var/second/data -e PORT=3031 -e UPLOAD_LOCATION='./uploads/images' -it -p 3031:3031 silverkir/diploma-backend:v1.0.2
